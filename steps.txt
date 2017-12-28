@@ -47,7 +47,8 @@ select * from staff;
 
 All data is present!!!
 
-
+# To see data from the command line 
+mysql -u root -pMysql@123 recipes_database -e "select * from staff"
 
 wget https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
 
