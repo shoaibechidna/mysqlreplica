@@ -1,0 +1,63 @@
+https://www.globo.tech/learning-center/setup-mysql-replication-centos-7/
+https://tapasmishra.wordpress.com/2012/06/11/how-to-configure-mysql-5-5-server-as-replication-slave/
+
+If running on centos
+Configure for Master first
+setenforce 0
+sed -i 's/enforcing/disabled/' /etc/sysconfig/selinux
+sed -i 's/enforcing/disabled/' /etc/selinux/config
+
+Refer the master_my.cnf file
+
+systemctl restart mysqld.service
+mysql -u root -p
+
+# Create slave user for replication
+grant replication slave on *.* to 'slaveuser'@'%' identified by 'Mysql@123';
+flush privileges;
+show master status;
+
+# Note down the file name and position
+mariadb-bin.000001
+pos=546
+exit
+
+Now coming on to slave machine
+Refer the slave_my.cnf file
+systemctl restart mysqld.service
+mysql -u root -p
+stop slave;
+change master to master_host='35.225.55.58', master_user='slaveuser' , master_password='Mysql@123' , master_log_file='mysql-bin.000002' , master_log_pos=154;
+start slave;
+SHOW SLAVE STATUS\G;
+
+Now move on to master, and when you create a database fill the data into it, it will get replicated to master as well
+
+mysql -u root -p
+create database recipes_database;
+use recipes_database;
+create table staff (c int);
+insert into staff (c) values (3);
+select * from staff;
+
+Switch to slave node and run
+mysql -u root -p
+use recipes_database;
+select * from staff;
+
+All data is present!!!
+
+
+
+wget https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+
+md5sum mysql57-community-release-el7-9.noarch.rpm
+
+yum install mysql-server
+
+systemctl start mysqld && systemctl status mysqld
+
+grep 'temporary password' /var/log/mysqld.log
+
+mysql_secure_installation
+
