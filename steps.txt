@@ -47,6 +47,9 @@ select * from staff;
 
 All data is present!!!
 
+# To change the password of mysql, log into mysql terminal and run:
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('Mysql@123');
+
 # To see data from the command line 
 mysql -u root -pMysql@123 recipes_database -e "select * from staff"
 
