@@ -1,0 +1,11 @@
+{
+    "apiVersion": "v1",
+    "kind": "ConfigMap",
+    "data": {
+      "my.cnf": "# For advice on how to change settings please see\n# http://dev.mysql.com/doc/refman/5.7/en/server-configuration-defaults.html\n[mysqld]\n#\n# Remove leading # and set to the amount of RAM for the most important data\n# cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.\n# innodb_buffer_pool_size = 128M\n#\n# Remove leading # to turn on a very important data integrity option: logging\n# changes to the binary log between backups.\n# log_bin\n#\n# Remove leading # to set options mainly useful for reporting servers.\n# The server defaults are faster for transactions and fast SELECTs.\n# Adjust sizes as needed, experiment to find the optimal values.\n# join_buffer_size = 128M\n# sort_buffer_size = 2M\n# read_rnd_buffer_size = 2M\ndatadir=/var/lib/mysql\nsocket=/var/lib/mysql/mysql.sock\nserver-id = 1\nbinlog-do-db=recipes_database\nrelay-log = /var/lib/mysql/mysql-relay-bin\nrelay-log-index = /var/lib/mysql/mysql-relay-bin.index\nlog-bin = /var/lib/mysql/mysql-bin\n# Disabling symbolic-links is recommended to prevent assorted security risks\nsymbolic-links=0\nlog-error=/var/log/mysqld.log\npid-file=/var/run/mysqld/mysqld.pid\n"
+    },
+    "metadata": {
+      "name": "mycnf",
+      "namespace": "mysql-poc"
+    }
+}

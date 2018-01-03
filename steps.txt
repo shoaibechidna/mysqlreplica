@@ -14,7 +14,12 @@ mysql -u root -p
 
 # Create slave user for replication
 grant replication slave on *.* to 'slaveuser'@'%' identified by 'Mysql@123';
+or
+mysql -u root -pMysql@123 -e "grant replication slave on *.* to 'slaveuser'@'%' identified by 'Mysql@123'"
+
 flush privileges;
+or
+mysql -u root -pMysql@123 -e "flush privileges;"
 show master status;
 
 # Note down the file name and position
@@ -50,7 +55,7 @@ All data is present!!!
 # To change the password of mysql, log into mysql terminal and run:
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('Mysql@123');
 
-# To see data from the command line 
+# To see data from the command line
 mysql -u root -pMysql@123 recipes_database -e "select * from staff"
 
 wget https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
@@ -64,4 +69,3 @@ systemctl start mysqld && systemctl status mysqld
 grep 'temporary password' /var/log/mysqld.log
 
 mysql_secure_installation
-

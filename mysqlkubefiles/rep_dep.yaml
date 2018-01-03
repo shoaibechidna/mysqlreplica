@@ -1,0 +1,47 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: mysql-deploy
+  namespace: mysql-poc
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql-master
+        image: actency/docker-mysql-replication:5.7
+        args:
+          - "--ignore-db-dir=lost+found"
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "mysqlroot"
+          - name: MYSQL_USER
+            value: "example_user"
+          - name: MYSQL_PASSWORD
+            value: "mysqlpwd"
+          - name: MYSQL_DATABASE
+            value: "example"
+          - name: REPLICATION_USER
+            value: "replication_user"
+          - name: REPLICATION_PASSWORD
+            value: "myreplpassword"
+        ports:
+          - name: mysqlport
+            containerPort: 3306
+        volumeMounts:
+          - name: mysql-vol1
+            mountPath: /var/lib/mysql # Storage Volume
+      volumes:
+        - name: mysql-vol1
+          persistentVolumeClaim:
+            claimName: mysql-pvc-claim
+      securityContext:
+        fsGroup: 999

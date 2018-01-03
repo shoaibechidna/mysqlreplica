@@ -1,0 +1,42 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: mysql-deploy
+  namespace: mysql-poc
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql1
+        image: mysql/mysql-server:5.6
+        ports:
+          - name: mysqlport
+            containerPort: 3306
+        volumeMounts:
+          - name: mysql-vol
+            mountPath: /var/lib/mysql # Storage Volume
+          - name: mysql-cm
+            mountPath: /mastercnf
+#        command: ["/bin/sh"]
+#        args: ["-c", "ln -sf /mastercnf/my.cnf /etc/my.cnf"]
+      volumes:
+        - name: mysql-vol
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+        - name: mysql-cm
+          configMap:
+            name: mycnf
+            items:
+            - key: my.cnf
+              path: my.cnf
+      securityContext:
+        fsGroup: 1000
