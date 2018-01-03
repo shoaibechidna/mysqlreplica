@@ -1,19 +1,22 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: mysql-deploy
+  name: mysql-deploy-master
   namespace: mysql-poc
   labels:
     app: mysql
+    role: master
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: mysql
+      role: master
   template:
     metadata:
       labels:
         app: mysql
+        role: master
     spec:
       containers:
       - name: mysql-master
@@ -34,7 +37,7 @@ spec:
           - name: REPLICATION_PASSWORD
             value: "myreplpassword"
         ports:
-          - name: mysqlport
+          - name: mysqlportmaster
             containerPort: 3306
         volumeMounts:
           - name: mysql-vol1
@@ -42,6 +45,6 @@ spec:
       volumes:
         - name: mysql-vol1
           persistentVolumeClaim:
-            claimName: mysql-pvc-claim
+            claimName: mysql-pvc-master
       securityContext:
         fsGroup: 999

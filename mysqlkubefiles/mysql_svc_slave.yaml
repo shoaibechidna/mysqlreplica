@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-svc-slave
+  namespace: mysql-poc
+spec:
+  ports:
+    - port: 3306
+      targetPort: mysqlportslave
+  selector:
+    role: slave
+  type: NodePort

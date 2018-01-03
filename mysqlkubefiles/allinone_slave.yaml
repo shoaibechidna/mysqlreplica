@@ -1,0 +1,92 @@
+# ---
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: mysql-storage-slave
+#   namespace: mysql-poc
+# provisioner: kubernetes.io/gce-pd
+# parameters:
+#   type: pd-ssd
+#
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: mysql-pvc-slave
+#   namespace: mysql-poc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 5Gi
+#   storageClassName: mysql-storage-slave
+# ---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: mysql-deploy-slave
+  namespace: mysql-poc
+  labels:
+    app: mysql
+    role: slave
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+      role: slave
+  template:
+    metadata:
+      labels:
+        app: mysql
+        role: slave
+    spec:
+      containers:
+      - name: mysql-slave
+        image: actency/docker-mysql-replication:5.7
+        args:
+          - "--ignore-db-dir=lost+found"
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "mysqlroot"
+          - name: MYSQL_USER
+            value: "example_user"
+          - name: MYSQL_PASSWORD
+            value: "mysqlpwd"
+          - name: MYSQL_DATABASE
+            value: "example"
+          - name: REPLICATION_USER
+            value: "replication_user"
+          - name: REPLICATION_PASSWORD
+            value: "myreplpassword"
+        ports:
+          - name: mysqlportslave
+            containerPort: 3306
+        command: ["/bin/sh"]
+        # args: ["-c", "sed -i 's/server-id=1/server-id=2/' /etc/mysql/mysql.conf.d/server-id.cnf", "mysql -u root -pmysqlroot -e "change master to master_host='10.7.244.103', master_user='replication_user' , master_password='myreplpassword' , master_log_file='mysql-bin.000004' , master_log_pos=154"", "mysql -u root -pmysqlroot -e "start slave"" ]
+        args: ["-c", "sed -i 's/server-id=1/server-id=2/' /etc/mysql/mysql.conf.d/server-id.cnf"]
+        volumeMounts:
+          - name: mysql-vol2
+            mountPath: /var/lib/mysql # Storage Volume
+      volumes:
+        - name: mysql-vol2
+          persistentVolumeClaim:
+            claimName: mysql-pvc-slave
+      securityContext:
+        fsGroup: 999
+# ---
+#
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mysql-svc-slave
+#   namespace: mysql-poc
+# spec:
+#   ports:
+#     - port: 3306
+#       targetPort: mysqlportslave
+#   selector:
+#     role: slave
+#   type: NodePort

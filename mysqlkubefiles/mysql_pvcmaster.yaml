@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pvc-claim
+  name: mysql-pvc-master
   namespace: mysql-poc
 spec:
   accessModes:
@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: mysql-storage-vol
+  storageClassName: mysql-storage-master
