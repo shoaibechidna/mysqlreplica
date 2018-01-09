@@ -36,7 +36,7 @@ spec:
         - name: MYSQL_REPLICATION_PASSWORD
           value: repl
         - name: MYSQL_MASTER_SERVICE_HOST
-          value: "10.63.254.226"
+          value: "10.63.254.226" . # Master Service IP
         ports:
         - containerPort: 3306
           hostPort: 3306
