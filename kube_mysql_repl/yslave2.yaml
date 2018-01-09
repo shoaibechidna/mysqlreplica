@@ -1,0 +1,42 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-slave2
+  namespace: mysql-poc
+  labels:
+    name: mysql-slave
+    poc: mysql
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: mysql-slave
+      poc: mysql
+  template:
+    metadata:
+      labels:
+        name: mysql-slave
+        poc: mysql
+    spec:
+      containers:
+      - name: mysql-slave2
+        #image: mdshoaib707/yslave1:s
+        image: mdshoaib707/yslave:1.1
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        - name: MYSQL_USER
+          value: mysql
+        - name: MYSQL_PASSWORD
+          value: mysql
+        - name: MYSQL_DATABASE
+          value: sample1
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: repl
+        - name: MYSQL_MASTER_SERVICE_HOST
+          value: "10.63.254.226"
+        ports:
+        - containerPort: 3306
+          hostPort: 3306
